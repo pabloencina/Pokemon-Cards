@@ -8,7 +8,7 @@ const mostrarPokemon = async function (id) {
   try {
     let resultado = await fetch(`${urlPokemon}${id}/`);
     let resultadoJson = await resultado.json();
-    console.log(resultadoJson);
+    //console.log(resultadoJson);
     await crearPokemon(resultadoJson);
   } catch (error) {
     console.log(error);
@@ -21,18 +21,12 @@ const mostrarPokemonEfecto = async function (id) {
     let result = await fetch(`${urlPokemoonEfecto}${id}/`);
     let resultJs = await result.json();
     console.log(resultJs.effect_entries[0].effect);
-    //await crearPokemon(resultadoJson);
+    //await crearPokemon(resultJs);
   } catch (error) {
     console.log(error);
   }
 };
 mostrarPokemonEfecto(1);
-
-let btn = document.createElement("button");
-btn.classList.add("btnPower");
-btnPower.addEventListener("click", () => {
-  console.log("efecto");
-});
 
 function getCard(number) {
   for (let i = 1; i <= number; i++) {
@@ -45,23 +39,40 @@ async function crearPokemon(pokemon) {
   contenedor.innerHTML += `
     <div class="row">
       <div class="col"></div>
-      <div class="card" style="width: 20rem">
+      <div class="card" style="width: 17rem">
         <img src="${
-          pokemon.sprites.back_default
+          pokemon.sprites.front_default
         }" class="card-img-top" alt="..." />
         <div class="card-body">
-          <h1 class="card-title">${pokemonMayuscula(pokemon)}</h1>
+          <h1 class="card-title">${pokemonNombre(pokemon)}</h1>
           <p class="card-text">
             #${pokemon.id.toString().padStart(3, 0)}
           </p>
-          <button type="button id="btnPower" class="btn btn-primary">Power</button>
+          <button id="btnPower-${pokemon.id.toString()}" class="btn btn-primary" type="button">Power</button>
         </div>
         </div>
     </div>
     `;
+    const btnPower = document.getElementById(`btnPower-${pokemon.id.toString()}`);
+    btnPower.addEventListener("click", ()=> {
+      console.log("efecto");
+    });
 }
 
-function pokemonMayuscula(pokemon) {
+function createBtnPower() {
+  let btn = document.createElement("button");
+  btn.classList.add("btn btn-primary");
+  btn.className = "btnPower"
+  btn.innerHTML = "power";
+  console.log(btn)
+
+  btnPower.addEventListener("click", ()=> {
+    console.log("efecto");
+  });
+  return btnPower
+}
+
+function pokemonNombre(pokemon) {
   let palabraConMayuscula = "";
   for (let i = 0; i < pokemon.name.length; i++) {
     let primeraLetra = pokemon.name[0].toUpperCase();
