@@ -1,43 +1,35 @@
 let contenedor = document.getElementById("contenedor");
 let btnSiguiente = document.getElementById("btnSiguiente");
 let btnAnterior = document.getElementById("btnAnterior");
-let btnPower = document.getElementById("btnPower");
 
 const urlPokemon = "https://pokeapi.co/api/v2/pokemon/";
-const mostrarPokemon = async function (id) {
+const getPokemon = async function (id) {
   try {
     let resultado = await fetch(`${urlPokemon}${id}/`);
     let resultadoJson = await resultado.json();
-    //console.log(resultadoJson);
-    await crearPokemon(resultadoJson);
+    crearPokemon(resultadoJson);
   } catch (error) {
     console.log(error);
   }
 };
-
-const urlPokemoonEfecto = "https://pokeapi.co/api/v2/ability/";
-const mostrarPokemonEfecto = async function (id) {
+/*
+const urlPokemonEfecto = "https://pokeapi.co/api/v2/ability/";
+const getPokemonPower = async function (id) {
   try {
-    let result = await fetch(`${urlPokemoonEfecto}${id}/`);
-    let resultJs = await result.json();
-    console.log(resultJs.effect_entries[0].effect);
-    //await crearPokemon(resultJs);
+    let resultado = await fetch(`${urlPokemonEfecto}${id}/`);
+    let resultadoJson = await resultado.json();
+    //await crearPokemon(resultadoJson);
+
+    //await crearCardDePower(resultadoJson);
   } catch (error) {
     console.log(error);
   }
-};
-mostrarPokemonEfecto(1);
+};*/
 
-function getCard(number) {
-  for (let i = 1; i <= number; i++) {
-    mostrarPokemon(i);
-  }
-}
-getCard(3);
-
-async function crearPokemon(pokemon) {
+function crearPokemon(pokemon) {
+  console.log(pokemon.id);
   contenedor.innerHTML += `
-    <div class="row">
+    <div class="row" id="cardContenedor">
       <div class="col"></div>
       <div class="card" style="width: 17rem">
         <img src="${
@@ -48,28 +40,13 @@ async function crearPokemon(pokemon) {
           <p class="card-text">
             #${pokemon.id.toString().padStart(3, 0)}
           </p>
-          <button id="btnPower-${pokemon.id.toString()}" class="btn btn-primary" type="button">Power</button>
+          <button id="btnPower-${
+            pokemon.id
+          }" class="btn btn-primary btn-power" type="button">Power</button>
         </div>
         </div>
     </div>
     `;
-    const btnPower = document.getElementById(`btnPower-${pokemon.id.toString()}`);
-    btnPower.addEventListener("click", ()=> {
-      console.log("efecto");
-    });
-}
-
-function createBtnPower() {
-  let btn = document.createElement("button");
-  btn.classList.add("btn btn-primary");
-  btn.className = "btnPower"
-  btn.innerHTML = "power";
-  console.log(btn)
-
-  btnPower.addEventListener("click", ()=> {
-    console.log("efecto");
-  });
-  return btnPower
 }
 
 function pokemonNombre(pokemon) {
@@ -83,23 +60,30 @@ function pokemonNombre(pokemon) {
 }
 
 let offset = 1;
-let limit = 3;
-function traerSiguientesPokemons(offset, limit) {
+let limit = 2;
+async function traerSiguientesPokemons(offset, limit) {
   for (let i = offset; i < offset + limit; i++) {
-    mostrarPokemon(i);
+    await getPokemon(i);
   }
+  document.querySelectorAll(".btn-power").forEach((item) => {
+    item.addEventListener("click", () => {
+      console.log("holii");
+    });
+  });
 }
 
-btnSiguiente.addEventListener("click", () => {
-  offset += 3;
-  traerSiguientesPokemons(offset, limit);
+traerSiguientesPokemons(offset, limit);
+
+btnSiguiente.addEventListener("click", async () => {
+  offset += 2;
   contenedor.innerHTML = "";
+  await traerSiguientesPokemons(offset, limit);
 });
 
-btnAnterior.addEventListener("click", () => {
+btnAnterior.addEventListener("click", async () => {
   if (offset != 1) {
-    offset -= 3;
-    traerSiguientesPokemons(offset, limit);
+    offset -= 2;
     contenedor.innerHTML = "";
+    await traerSiguientesPokemons(offset, limit);
   }
 });
