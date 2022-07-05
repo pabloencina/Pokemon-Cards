@@ -27,7 +27,8 @@ const getPokemonPower = async function (id) {
   try {
     let result = await fetch(`${urlPokemonEfecto}${id}/`);
     let resultJson = await result.json();
-    console.log(resultJson);
+    console.log(resultJson.effect_entries[1].effect);
+    return resultJson.effect_entries[1].effect
   } catch (error) {
     console.log(error);
   }
@@ -72,8 +73,8 @@ async function traerSiguientesPokemons(offset, limit) {
   document.querySelectorAll(".btn-power").forEach( (item) => {
     item.addEventListener("click",async () => {
       console.log(item.dataset.pokemonId);
-      swal ( item.dataset.pokemonName , item.dataset.pokemonName);
-      await getPokemonPower(item.dataset.pokemonId);
+      swal ( item.dataset.pokemonName ,await getPokemonPower(item.dataset.pokemonId));
+      ;
     });
   });
 }
