@@ -62,7 +62,7 @@ function crearPokemon(pokemon) {
             pokemon.id
           }" class="btn btn-primary btn-power" type="button" data-pokemon-id=${
     pokemon.id
-  } data-pokemon-name=${pokemonNombre(pokemon)}>Power</button>
+  } data-pokemon-name=${pokemonNombre(pokemon)}>Power ${pokemonNombre(pokemon)}</button>
         </div>
         </div>
     </div>
@@ -82,7 +82,7 @@ function pokemonNombre(pokemon) {
 }
 
 let offset = 1;
-let limit = 6;
+let limit = 8;
 async function traerSiguientesPokemons(offset, limit) {
   for (let i = offset; i < offset + limit; i++) {
     await getPokemonById(i);
@@ -104,7 +104,7 @@ async function asociarEventosBtnPower() {
 traerSiguientesPokemons(offset, limit);
 
 btnSiguiente.addEventListener("click", async () => {
-  offset += 6;
+  offset += 8;
   contenedor.innerHTML = "";
   await traerSiguientesPokemons(offset, limit);
 });

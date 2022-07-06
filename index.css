@@ -58,3 +58,6 @@ body{
     background-color: #02bc71;
     height: 100px;
 }
+img{
+    border-bottom:solid 5px #02bc71;
+}
