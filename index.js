@@ -6,16 +6,25 @@ let btnBusqueda = document.getElementById("btnBusqueda");
 
 const urlPokemon = "https://pokeapi.co/api/v2/pokemon/";
 
-const getPokemon = async function (id) {
+const getPokemonById = async function (id) {
   try {
     let resultado = await fetch(`${urlPokemon}${id}/`);
+    let resultadoJson = await resultado.json();
+    crearPokemon(resultadoJson);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const urlPokemonByName = "https://pokeapi.co/api/v2/pokemon/";
+const getPokemonByName = async function (name) {
+  try {
+    let resultado = await fetch(`${urlPokemonByName}${name}/`);
     if (resultado.status === 200) {
       let resultadoJson = await resultado.json();
-      console.log(resultadoJson.name)
-      crearPokemon(resultadoJson);
-      //await getPokemonPower(resultadoJson)
+      return resultadoJson;
     } else {
-      mostrarPokemonInexistente();
+      return null;
     }
   } catch (error) {
     console.log(error);
@@ -27,8 +36,7 @@ const getPokemonPower = async function (id) {
   try {
     let result = await fetch(`${urlPokemonEfecto}${id}/`);
     let resultJson = await result.json();
-    console.log(resultJson.effect_entries[1].effect);
-    return resultJson.effect_entries[1].effect
+    return resultJson.effect_entries[1].effect;
   } catch (error) {
     console.log(error);
   }
@@ -47,7 +55,11 @@ function crearPokemon(pokemon) {
           <p class="card-text">
             #${pokemon.id.toString().padStart(3, 0)}
           </p>
-          <button id="btnPower-${pokemon.id}" class="btn btn-primary btn-power" type="button" data-pokemon-id=${pokemon.id} data-pokemon-name=${pokemonNombre(pokemon)}>Power</button>
+          <button id="btnPower-${
+            pokemon.id
+          }" class="btn btn-primary btn-power" type="button" data-pokemon-id=${
+    pokemon.id
+  } data-pokemon-name=${pokemonNombre(pokemon)}>Power</button>
         </div>
         </div>
     </div>
@@ -65,16 +77,21 @@ function pokemonNombre(pokemon) {
 }
 
 let offset = 1;
-let limit = 2;
+let limit = 6;
 async function traerSiguientesPokemons(offset, limit) {
   for (let i = offset; i < offset + limit; i++) {
-    await getPokemon(i);
+    await getPokemonById(i);
   }
-  document.querySelectorAll(".btn-power").forEach( (item) => {
-    item.addEventListener("click",async () => {
-      console.log(item.dataset.pokemonId);
-      swal ( item.dataset.pokemonName ,await getPokemonPower(item.dataset.pokemonId));
-      ;
+  asociarEventosBtnPower();
+}
+
+async function asociarEventosBtnPower() {
+  document.querySelectorAll(".btn-power").forEach((item) => {
+    item.addEventListener("click", async () => {
+      swal(
+        item.dataset.pokemonName,
+        await getPokemonPower(item.dataset.pokemonId)
+      );
     });
   });
 }
@@ -82,7 +99,7 @@ async function traerSiguientesPokemons(offset, limit) {
 traerSiguientesPokemons(offset, limit);
 
 btnSiguiente.addEventListener("click", async () => {
-  offset += 2;
+  offset += 6;
   contenedor.innerHTML = "";
   await traerSiguientesPokemons(offset, limit);
 });
@@ -95,11 +112,17 @@ btnAnterior.addEventListener("click", async () => {
   }
 });
 
-btnBusqueda.addEventListener("click", () => {
-  if (inputBusqueda.value = "") {
-    crearPokemon(inputBusqueda.value);
-    
-    console.log("chau");
+btnBusqueda.addEventListener("click", async () => {
+  if (inputBusqueda.value != "") {
+    console.log(inputBusqueda.value);
+    const pokemonFound = await getPokemonByName(inputBusqueda.value);
+    if (pokemonFound) {
+      contenedor.innerHTML = "";
+      crearPokemon(pokemonFound);
+      await asociarEventosBtnPower();
+    } else {
+      mostrarPokemonInexistente();
+    }
   } else {
     mostrarInputVacio();
   }
@@ -109,13 +132,13 @@ btnBusqueda.addEventListener("click", () => {
 function mostrarInputVacio() {
   Toastify({
     text: "ingrese un Pokemon",
-    duration: 6000,
+    duration: 4000,
   }).showToast();
 }
 
 function mostrarPokemonInexistente() {
   Toastify({
     text: "Pokemon no encontrado",
-    duration: 6000,
+    duration: 4000,
   }).showToast();
 }
