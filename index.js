@@ -3,6 +3,9 @@ let btnSiguiente = document.getElementById("btnSiguiente");
 let btnAnterior = document.getElementById("btnAnterior");
 let inputBusqueda = document.getElementById("inputBusqueda");
 let btnBusqueda = document.getElementById("btnBusqueda");
+let titleSpan = document.getElementById("titleSpan");
+let title = document.getElementById("title");
+let body = document.getElementById("body");
 
 const urlPokemon = "https://pokeapi.co/api/v2/pokemon/";
 
@@ -64,6 +67,8 @@ function crearPokemon(pokemon) {
         </div>
     </div>
     `;
+    body.style.backgroundColor = "#024dbc"
+    titleSpan.innerHTML = ""
 }
 
 function pokemonNombre(pokemon) {
@@ -119,6 +124,8 @@ btnBusqueda.addEventListener("click", async () => {
     if (pokemonFound) {
       contenedor.innerHTML = "";
       crearPokemon(pokemonFound);
+      titleSpan.innerHTML = inputBusqueda.value.toUpperCase();
+      body.style.backgroundColor = "#0A2955"
       await asociarEventosBtnPower();
     } else {
       mostrarPokemonInexistente();
